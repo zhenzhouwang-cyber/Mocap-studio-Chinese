@@ -1,0 +1,627 @@
+{
+  "meta": {
+    "filename": "sample_mocap.csv",
+    "filepath": "E:\\coursor\\project\\opera_mocap_tool\\sample_data\\sample_mocap.csv",
+    "frame_rate": 100.0,
+    "n_frames": 11,
+    "duration_sec": 0.11,
+    "marker_labels": [
+      "Marker1",
+      "Marker2"
+    ],
+    "filter_cutoff_hz": 6.0,
+    "interp_method": "linear"
+  },
+  "quality_report": {
+    "global": {
+      "n_frames": 11,
+      "frame_rate": 100.0,
+      "duration_sec": 0.11,
+      "n_markers": 2,
+      "overall_missing_rate": 0.0,
+      "overall_mean_residual": null
+    },
+    "markers": {
+      "Marker1": {
+        "missing_rate": 0.0,
+        "n_valid_frames": 11,
+        "n_total_frames": 11
+      },
+      "Marker2": {
+        "missing_rate": 0.0,
+        "n_valid_frames": 11,
+        "n_total_frames": 11
+      }
+    }
+  },
+  "kinematics": {
+    "trajectories": {
+      "Marker1": {
+        "x": [
+          100.0,
+          101.0,
+          102.0,
+          103.0,
+          104.0,
+          105.0,
+          106.0,
+          107.0,
+          108.0,
+          109.0,
+          110.0
+        ],
+        "y": [
+          50.0,
+          51.0,
+          52.0,
+          53.0,
+          54.0,
+          55.0,
+          56.0,
+          57.0,
+          58.0,
+          59.0,
+          60.0
+        ],
+        "z": [
+          10.0,
+          10.5,
+          11.0,
+          11.5,
+          12.0,
+          12.5,
+          13.0,
+          13.5,
+          14.0,
+          14.5,
+          15.0
+        ]
+      },
+      "Marker2": {
+        "x": [
+          105.0,
+          106.0,
+          107.0,
+          108.0,
+          109.0,
+          110.0,
+          111.0,
+          112.0,
+          113.0,
+          114.0,
+          115.0
+        ],
+        "y": [
+          52.0,
+          53.0,
+          54.0,
+          55.0,
+          56.0,
+          57.0,
+          58.0,
+          59.0,
+          60.0,
+          61.0,
+          62.0
+        ],
+        "z": [
+          12.0,
+          12.5,
+          13.0,
+          13.5,
+          14.0,
+          14.5,
+          15.0,
+          15.5,
+          16.0,
+          16.5,
+          17.0
+        ]
+      }
+    },
+    "velocities": {
+      "Marker1": {
+        "vx": [
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0
+        ],
+        "vy": [
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0
+        ],
+        "vz": [
+          50.0,
+          50.0,
+          50.0,
+          50.0,
+          50.0,
+          50.0,
+          50.0,
+          50.0,
+          50.0,
+          50.0,
+          50.0
+        ],
+        "speed": [
+          150.0,
+          150.0,
+          150.0,
+          150.0,
+          150.0,
+          150.0,
+          150.0,
+          150.0,
+          150.0,
+          150.0,
+          150.0
+        ]
+      },
+      "Marker2": {
+        "vx": [
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0
+        ],
+        "vy": [
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0
+        ],
+        "vz": [
+          50.0,
+          50.0,
+          50.0,
+          50.0,
+          50.0,
+          50.0,
+          50.0,
+          50.0,
+          50.0,
+          50.0,
+          50.0
+        ],
+        "speed": [
+          150.0,
+          150.0,
+          150.0,
+          150.0,
+          150.0,
+          150.0,
+          150.0,
+          150.0,
+          150.0,
+          150.0,
+          150.0
+        ]
+      }
+    },
+    "accelerations": {
+      "Marker1": {
+        "ax": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "ay": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "az": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "magnitude": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "Marker2": {
+        "ax": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "ay": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "az": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "magnitude": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "spatial_range": {
+      "Marker1": {
+        "x_min": 100.0,
+        "x_max": 110.0,
+        "y_min": 50.0,
+        "y_max": 60.0,
+        "z_min": 10.0,
+        "z_max": 15.0,
+        "span_x": 10.0,
+        "span_y": 10.0,
+        "span_z": 5.0
+      },
+      "Marker2": {
+        "x_min": 105.0,
+        "x_max": 115.0,
+        "y_min": 52.0,
+        "y_max": 62.0,
+        "z_min": 12.0,
+        "z_max": 17.0,
+        "span_x": 10.0,
+        "span_y": 10.0,
+        "span_z": 5.0
+      }
+    },
+    "displacement": {
+      "Marker1": [
+        7.5,
+        6.0,
+        4.5,
+        3.0,
+        1.5,
+        0.0,
+        1.5,
+        3.0,
+        4.5,
+        6.0,
+        7.5
+      ],
+      "Marker2": [
+        7.5,
+        6.0,
+        4.5,
+        3.0,
+        1.5,
+        0.0,
+        1.5,
+        3.0,
+        4.5,
+        6.0,
+        7.5
+      ]
+    }
+  },
+  "opera_features": {
+    "amplitude": {
+      "Marker1": {
+        "mean": 4.0909,
+        "max": 7.5,
+        "std": 2.4009
+      },
+      "Marker2": {
+        "mean": 4.0909,
+        "max": 7.5,
+        "std": 2.4009
+      }
+    },
+    "smoothness": {
+      "Marker1": {
+        "mean_curvature": 0.0,
+        "speed_smoothness": 0.0
+      },
+      "Marker2": {
+        "mean_curvature": 0.0,
+        "speed_smoothness": 0.0
+      }
+    },
+    "rhythm": {
+      "Marker1": {
+        "mean_speed": 150.0,
+        "max_speed": 150.0,
+        "speed_variation": 0.0
+      },
+      "Marker2": {
+        "mean_speed": 150.0,
+        "max_speed": 150.0,
+        "speed_variation": 0.0
+      }
+    },
+    "stylization": {
+      "overall_mean_speed": 150.0,
+      "overall_speed_std": 0.0
+    }
+  },
+  "rhythm": {
+    "speed_profile": {
+      "mean_speed_per_frame": [
+        150.0,
+        150.0,
+        150.0,
+        150.0,
+        150.0,
+        150.0,
+        150.0,
+        150.0,
+        150.0,
+        150.0,
+        150.0
+      ],
+      "threshold": 150.0
+    },
+    "pauses": [],
+    "rhythm_stats": {
+      "mean_speed": 150.0,
+      "max_speed": 150.0,
+      "n_pauses": 0,
+      "total_pause_sec": 0
+    }
+  },
+  "timeseries": [
+    {
+      "time": 0.0,
+      "frame": 0,
+      "Marker1_x": 100.0,
+      "Marker1_y": 50.0,
+      "Marker1_z": 10.0,
+      "Marker1_displacement": 7.5,
+      "Marker1_speed": 150.0,
+      "Marker2_x": 105.0,
+      "Marker2_y": 52.0,
+      "Marker2_z": 12.0,
+      "Marker2_displacement": 7.5,
+      "Marker2_speed": 150.0,
+      "mean_speed": 150.0
+    },
+    {
+      "time": 0.01,
+      "frame": 1,
+      "Marker1_x": 101.0,
+      "Marker1_y": 51.0,
+      "Marker1_z": 10.5,
+      "Marker1_displacement": 6.0,
+      "Marker1_speed": 150.0,
+      "Marker2_x": 106.0,
+      "Marker2_y": 53.0,
+      "Marker2_z": 12.5,
+      "Marker2_displacement": 6.0,
+      "Marker2_speed": 150.0,
+      "mean_speed": 150.0
+    },
+    {
+      "time": 0.02,
+      "frame": 2,
+      "Marker1_x": 102.0,
+      "Marker1_y": 52.0,
+      "Marker1_z": 11.0,
+      "Marker1_displacement": 4.5,
+      "Marker1_speed": 150.0,
+      "Marker2_x": 107.0,
+      "Marker2_y": 54.0,
+      "Marker2_z": 13.0,
+      "Marker2_displacement": 4.5,
+      "Marker2_speed": 150.0,
+      "mean_speed": 150.0
+    },
+    {
+      "time": 0.03,
+      "frame": 3,
+      "Marker1_x": 103.0,
+      "Marker1_y": 53.0,
+      "Marker1_z": 11.5,
+      "Marker1_displacement": 3.0,
+      "Marker1_speed": 150.0,
+      "Marker2_x": 108.0,
+      "Marker2_y": 55.0,
+      "Marker2_z": 13.5,
+      "Marker2_displacement": 3.0,
+      "Marker2_speed": 150.0,
+      "mean_speed": 150.0
+    },
+    {
+      "time": 0.04,
+      "frame": 4,
+      "Marker1_x": 104.0,
+      "Marker1_y": 54.0,
+      "Marker1_z": 12.0,
+      "Marker1_displacement": 1.5,
+      "Marker1_speed": 150.0,
+      "Marker2_x": 109.0,
+      "Marker2_y": 56.0,
+      "Marker2_z": 14.0,
+      "Marker2_displacement": 1.5,
+      "Marker2_speed": 150.0,
+      "mean_speed": 150.0
+    },
+    {
+      "time": 0.05,
+      "frame": 5,
+      "Marker1_x": 105.0,
+      "Marker1_y": 55.0,
+      "Marker1_z": 12.5,
+      "Marker1_displacement": 0.0,
+      "Marker1_speed": 150.0,
+      "Marker2_x": 110.0,
+      "Marker2_y": 57.0,
+      "Marker2_z": 14.5,
+      "Marker2_displacement": 0.0,
+      "Marker2_speed": 150.0,
+      "mean_speed": 150.0
+    },
+    {
+      "time": 0.06,
+      "frame": 6,
+      "Marker1_x": 106.0,
+      "Marker1_y": 56.0,
+      "Marker1_z": 13.0,
+      "Marker1_displacement": 1.5,
+      "Marker1_speed": 150.0,
+      "Marker2_x": 111.0,
+      "Marker2_y": 58.0,
+      "Marker2_z": 15.0,
+      "Marker2_displacement": 1.5,
+      "Marker2_speed": 150.0,
+      "mean_speed": 150.0
+    },
+    {
+      "time": 0.07,
+      "frame": 7,
+      "Marker1_x": 107.0,
+      "Marker1_y": 57.0,
+      "Marker1_z": 13.5,
+      "Marker1_displacement": 3.0,
+      "Marker1_speed": 150.0,
+      "Marker2_x": 112.0,
+      "Marker2_y": 59.0,
+      "Marker2_z": 15.5,
+      "Marker2_displacement": 3.0,
+      "Marker2_speed": 150.0,
+      "mean_speed": 150.0
+    },
+    {
+      "time": 0.08,
+      "frame": 8,
+      "Marker1_x": 108.0,
+      "Marker1_y": 58.0,
+      "Marker1_z": 14.0,
+      "Marker1_displacement": 4.5,
+      "Marker1_speed": 150.0,
+      "Marker2_x": 113.0,
+      "Marker2_y": 60.0,
+      "Marker2_z": 16.0,
+      "Marker2_displacement": 4.5,
+      "Marker2_speed": 150.0,
+      "mean_speed": 150.0
+    },
+    {
+      "time": 0.09,
+      "frame": 9,
+      "Marker1_x": 109.0,
+      "Marker1_y": 59.0,
+      "Marker1_z": 14.5,
+      "Marker1_displacement": 6.0,
+      "Marker1_speed": 150.0,
+      "Marker2_x": 114.0,
+      "Marker2_y": 61.0,
+      "Marker2_z": 16.5,
+      "Marker2_displacement": 6.0,
+      "Marker2_speed": 150.0,
+      "mean_speed": 150.0
+    },
+    {
+      "time": 0.1,
+      "frame": 10,
+      "Marker1_x": 110.0,
+      "Marker1_y": 60.0,
+      "Marker1_z": 15.0,
+      "Marker1_displacement": 7.5,
+      "Marker1_speed": 150.0,
+      "Marker2_x": 115.0,
+      "Marker2_y": 62.0,
+      "Marker2_z": 17.0,
+      "Marker2_displacement": 7.5,
+      "Marker2_speed": 150.0,
+      "mean_speed": 150.0
+    }
+  ]
+}
