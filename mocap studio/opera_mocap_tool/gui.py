@@ -1134,21 +1134,126 @@ document.addEventListener('DOMContentLoaded', function() {
         # 上传参考文件
         st.markdown("---")
         st.markdown("#### 📂 上传参考动作")
-        reference_file = st.file_uploader(
-            "参考动作（DTW 比对与评分）",
-            type=["c3d", "csv", "fbx", "bvh"],
-            help="上传参考动捕做时序对齐与相似度评分",
-            key="reference_upload",
+        
+        # 参考来源选择
+        ref_source_option = st.radio(
+            "参考来源",
+            ["上传文件", "上传视频", "摄像头直拍"],
+            horizontal=True,
+            key="ref_source_option"
         )
+        
+        reference_file = None
+        reference_is_video = False
+        reference_from_camera = False
+        
+        if ref_source_option == "上传文件":
+            # 原有文件上传（动捕格式）
+            reference_file = st.file_uploader(
+                "参考动作（DTW 比对与评分）",
+                type=["c3d", "csv", "fbx", "bvh"],
+                help="上传参考动捕做时序对齐与相似度评分",
+                key="reference_upload"
+            )
+        elif ref_source_option == "上传视频":
+            # 视频上传
+            reference_file = st.file_uploader(
+                "参考视频（MediaPipe 姿态估计后比对）",
+                type=["mp4", "avi", "mov", "mkv", "webm"],
+                help="上传视频，使用 MediaPipe 提取姿态后进行 DTW 比对",
+                key="reference_video_upload"
+            )
+            reference_is_video = True
+        else:
+            # 摄像头直拍
+            st.markdown("**📸 摄像头直拍**")
+            camera_video = st.camera_input(
+                "录制参考动作视频",
+                help="使用摄像头录制动作作为参考",
+                key="reference_camera",
+                accept_multiple_files=False
+            )
+            reference_from_camera = True
         
         result = st.session_state.get("analysis_result")
         reference_compare_result = None
         reference_interpretation = None
         
-        if result and reference_file and getattr(reference_file, "name", None):
+        # 处理摄像头直拍
+        if reference_from_camera:
+            camera_input = st.session_state.get("reference_camera")
+            if camera_input is not None:
+                st.info("📸 摄像头参考：使用 MediaPipe 提取姿态后进行比对")
+                # camera_input 是 UploadedFile
+                ref_tmp = Path(tempfile.gettempdir()) / "ref_camera_video.mp4"
+                try:
+                    with open(ref_tmp, "wb") as f:
+                        f.write(camera_input.getvalue())
+                    
+                    # 使用 load_video_pose 加载视频
+                    from opera_mocap_tool.io import load_video_pose
+                    ref_mocap = load_video_pose(ref_tmp, target_fps=30.0)
+                    
+                    # 对视频姿态数据进行分析
+                    ref_result = analyze(
+                        None,  # 不需要文件路径
+                        mocap_data=ref_mocap,
+                        filter_cutoff_hz=filter_cutoff,
+                        interp_method=interp_method,
+                        max_gap_frames=max_gap,
+                    )
+                    
+                    from opera_mocap_tool.analysis.reference_compare import compare_with_reference, interpret_reference_comparison
+                    reference_compare_result = compare_with_reference(result, ref_result, normalize=True)
+                    if reference_compare_result.get("error"):
+                        reference_compare_result = None
+                    else:
+                        reference_interpretation = interpret_reference_comparison(result, ref_result, reference_compare_result)
+                except ImportError as e:
+                    st.error(f"缺少依赖: {e}。请安装: pip install opencv-python mediapipe")
+                except Exception as e:
+                    st.warning(f"摄像头参考比对失败: {e}")
+            elif result:
+                st.info("点击摄像头录制按钮录制参考动作视频")
+        
+        elif result and reference_file and getattr(reference_file, "name", None):
             blender_exe = st.session_state.get("viewer_blender_exe", "")
             ref_is_fbx = reference_file.name.lower().endswith(".fbx")
-            if ref_is_fbx and (not blender_exe or not blender_exe.strip()):
+            ref_is_video = reference_is_video or reference_file.name.lower().endswith((".mp4", ".avi", ".mov", ".mkv", ".webm"))
+            
+            # 视频文件不需要 Blender
+            if ref_is_video:
+                st.info("📹 视频参考：使用 MediaPipe 提取姿态后进行比对")
+                ref_tmp = Path(tempfile.gettempdir()) / ("ref_" + reference_file.name)
+                try:
+                    with open(ref_tmp, "wb") as f:
+                        f.write(reference_file.getvalue())
+                    
+                    # 使用 load_video_pose 加载视频
+                    from opera_mocap_tool.io import load_video_pose
+                    ref_mocap = load_video_pose(ref_tmp, target_fps=30.0)
+                    
+                    # 对视频姿态数据进行分析
+                    ref_result = analyze(
+                        None,  # 不需要文件路径
+                        mocap_data=ref_mocap,
+                        filter_cutoff_hz=filter_cutoff,
+                        interp_method=interp_method,
+                        max_gap_frames=max_gap,
+                    )
+                    
+                    from opera_mocap_tool.analysis.reference_compare import compare_with_reference, interpret_reference_comparison
+                    reference_compare_result = compare_with_reference(result, ref_result, normalize=True)
+                    if reference_compare_result.get("error"):
+                        reference_compare_result = None
+                    else:
+                        reference_interpretation = interpret_reference_comparison(result, ref_result, reference_compare_result)
+                except ImportError as e:
+                    st.error(f"缺少依赖: {e}。请安装: pip install opencv-python mediapipe")
+                except Exception as e:
+                    st.warning(f"视频参考比对失败: {e}")
+                    
+            elif ref_is_fbx and (not blender_exe or not blender_exe.strip()):
                 st.warning("参考动作为 FBX，请先在「动捕查看器」填写 Blender 路径。")
             else:
                 ref_tmp = Path(tempfile.gettempdir()) / ("ref_" + reference_file.name)
@@ -1198,7 +1303,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 st.metric("时间缩放比", reference_interpretation.get("time_scale_ratio"))
                 st.metric("节奏错位 (秒)", reference_interpretation.get("lapsing_sec"))
         elif result:
-            st.info("上传参考动作文件（C3D、CSV、FBX、BVH）进行 DTW 比对分析")
+            st.info("上传参考动作文件（C3D、CSV、FBX、BVH）或视频进行 DTW 比对分析")
 
     # ========== 唱做关联 ==========
     with tab_sync_view:

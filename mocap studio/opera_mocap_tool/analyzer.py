@@ -9,6 +9,7 @@ from .analysis.segments import compute_action_segments
 from .analysis.laban_approx import compute_laban_approx
 from .export import export
 from .io import load_mocap
+from .io.base import MocapData
 from .plotting import plot_analysis
 from .preprocessing import apply_filter, compute_quality_report, interpolate_missing
 
@@ -19,8 +20,9 @@ DEFAULT_MAX_GAP_FRAMES = 10
 
 
 def analyze(
-    path: str | Path,
+    path: str | Path | None = None,
     *,
+    mocap_data: MocapData | None = None,
     filter_cutoff_hz: float = DEFAULT_FILTER_CUTOFF_HZ,
     interp_method: str = DEFAULT_INTERP_METHOD,
     max_gap_frames: int = DEFAULT_MAX_GAP_FRAMES,
@@ -31,6 +33,7 @@ def analyze(
 
     Args:
         path: C3D 或 CSV 文件路径。
+        mocap_data: 可选的 MocapData 对象（用于直接传入视频姿态数据等）。
         filter_cutoff_hz: 低通滤波截止频率。
         interp_method: 插值方法 "linear" / "spline" / "cubic"。
         max_gap_frames: 最大插值间隙帧数。
@@ -38,12 +41,24 @@ def analyze(
 
     Returns:
         包含 meta, quality_report, kinematics, opera_features, rhythm, timeseries 的字典。
-    """
-    path = Path(path)
-    if not path.is_file():
-        raise FileNotFoundError(f"文件不存在: {path}")
 
-    data = load_mocap(path)
+    Raises:
+        ValueError: 当 path 和 mocap_data 都未提供时。
+    """
+    # 如果提供了 mocap_data，直接使用；否则从文件加载
+    if mocap_data is not None:
+        data = mocap_data
+        filename = getattr(mocap_data, 'metadata', {}).get('source', 'video_mocap')
+        filepath = 'memory'
+    else:
+        if path is None:
+            raise ValueError("必须提供 path 或 mocap_data 参数")
+        path = Path(path)
+        if not path.is_file():
+            raise FileNotFoundError(f"文件不存在: {path}")
+        data = load_mocap(path)
+        filename = path.name
+        filepath = str(path.resolve())
 
     if apply_preprocessing:
         data = interpolate_missing(data, method=interp_method, max_gap_frames=max_gap_frames)
@@ -63,8 +78,8 @@ def analyze(
 
     return {
         "meta": {
-            "filename": path.name,
-            "filepath": str(path.resolve()),
+            "filename": filename,
+            "filepath": filepath,
             "opera_type": "京剧",
             "frame_rate": float(data.frame_rate),
             "n_frames": int(data.n_frames),
