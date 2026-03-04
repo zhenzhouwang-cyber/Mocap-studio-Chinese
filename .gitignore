@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 虚拟环境
+.venv/
+venv/
+ENV/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 系统
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 项目输出与临时
+*.log
+.cache/
+output/
+out/
+*.tmp
+.opera_fbx_*
+
+# Streamlit
+.streamlit/
+
+# 临时文件
+*_analysis.json
+*_analysis.png
+*_timeseries.csv
+test_*.py
+*.wav
+*.mp4
+*.avi
+
+# 批处理和脚本
+*.bat
+*.vbs
+*.ps1
+
+# 演示文件
+run_*.py
+run_*.pyw
