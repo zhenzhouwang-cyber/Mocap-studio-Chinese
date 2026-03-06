@@ -19,7 +19,18 @@ from opera_mocap_tool.commercial.td_particles import (
     create_td_integration_module,
 )
 
+from opera_mocap_tool.commercial.blender_rig import (
+    DangType,
+    BodyPart,
+    BoneDefinition,
+    RigConfig,
+    OperaRigBuilder,
+    OperaMaterialLibrary,
+    OperaAnimationLibrary,
+)
+
 __all__ = [
+    # TD Particles
     "ParticlePreset",
     "EmitterShape",
     "ParticleEmitter",
@@ -27,4 +38,12 @@ __all__ = [
     "TDParticleTransmitter",
     "PresetLibrary",
     "create_td_integration_module",
+    # Blender Rig
+    "DangType",
+    "BodyPart",
+    "BoneDefinition",
+    "RigConfig",
+    "OperaRigBuilder",
+    "OperaMaterialLibrary",
+    "OperaAnimationLibrary",
 ]
