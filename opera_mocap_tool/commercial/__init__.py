@@ -29,6 +29,19 @@ from opera_mocap_tool.commercial.blender_rig import (
     OperaAnimationLibrary,
 )
 
+from opera_mocap_tool.commercial.ai_motion import (
+    MotionDataType,
+    MotionSequence,
+    TrainingConfig,
+    MotionPreprocessor,
+    MotionEncoder,
+    MotionDecoder,
+    OperaMotionVAE,
+    StyleTransferModel,
+    MotionGenerator,
+    MotionTrainer,
+)
+
 __all__ = [
     # TD Particles
     "ParticlePreset",
@@ -46,4 +59,15 @@ __all__ = [
     "OperaRigBuilder",
     "OperaMaterialLibrary",
     "OperaAnimationLibrary",
+    # AI Motion
+    "MotionDataType",
+    "MotionSequence",
+    "TrainingConfig",
+    "MotionPreprocessor",
+    "MotionEncoder",
+    "MotionDecoder",
+    "OperaMotionVAE",
+    "StyleTransferModel",
+    "MotionGenerator",
+    "MotionTrainer",
 ]
