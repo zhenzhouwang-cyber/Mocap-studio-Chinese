@@ -1178,7 +1178,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 key="yunshou_upload"
             )
             if yunshou_file:
-                from opera_mocap_tool.io import load_mocap
                 yunshou_tmp = Path(tempfile.gettempdir()) / yunshou_file.name
                 with open(yunshou_tmp, "wb") as f:
                     f.write(yunshou_file.getvalue())
@@ -1261,7 +1260,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     # 复用京剧特征的雷达图
                     if yunshou_metrics:
                         try:
-                            import plotly.graph_objects as go
                             labels = list(yunshou_metrics.keys())
                             values = list(yunshou_metrics.values())
                             
