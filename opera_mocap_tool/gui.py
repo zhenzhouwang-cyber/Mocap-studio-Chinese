@@ -1613,7 +1613,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 # 获取预设
                 preset = ParticlePreset(preset_type)
-                emitter = PresetLibrary.create_emitter_from_preset(
+                emitter = PresetLibrary.create_emitter(
                     preset,
                     marker_name=emitter_marker,
                 )
@@ -1781,8 +1781,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     if st.button("🔄 生成增强数据"):
                         # 创建示例数据
-                        from opera_mocap_tool.commercial.ai_motion import MotionSequence
-
                         sample_frames = np.random.randn(30, 22, 3)
                         sample_seq = MotionSequence(
                             frames=sample_frames,
