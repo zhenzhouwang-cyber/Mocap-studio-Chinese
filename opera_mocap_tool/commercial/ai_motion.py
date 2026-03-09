@@ -268,7 +268,12 @@ class MotionPreprocessor:
             [-sin_r, 0, cos_r]
         ])
         
-        rotated_frames = np.einsum("ij,Tjk->Tik", rotation_matrix, sequence.frames)
+        # 旋转: 对每一帧的每个关节应用旋转矩阵
+        # frames: (T,J,3) -> rotate each (3,) vector
+        rotated_frames = np.zeros_like(sequence.frames)
+        for t in range(sequence.frames.shape[0]):
+            for j in range(sequence.frames.shape[1]):
+                rotated_frames[t, j, :] = rotation_matrix @ sequence.frames[t, j, :]
         
         return MotionSequence(
             frames=rotated_frames,

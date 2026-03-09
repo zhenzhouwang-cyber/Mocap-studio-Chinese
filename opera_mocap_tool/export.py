@@ -130,3 +130,67 @@ def export(
         write_touchdesigner_dat(result, td_path)
 
     return (json_path, csv_path, plot_path, td_path)
+
+
+# ============================================================================
+# 商业模块导出
+# ============================================================================
+
+def export_particle_config(
+    preset: str,
+    emitter_config: dict,
+    output_path: str | Path,
+) -> Path:
+    """
+    导出粒子系统配置。
+
+    Args:
+        preset: 粒子预设名称
+        emitter_config: 发射器配置
+        output_path: 输出文件路径
+
+    Returns:
+        输出文件路径
+    """
+    import json
+
+    config = {
+        "preset": preset,
+        "emitter": emitter_config,
+    }
+
+    output_path = Path(output_path)
+    with open(output_path, 'w', encoding='utf-8') as f:
+        json.dump(config, f, indent=2)
+
+    return output_path
+
+
+def export_rig_config(
+    rig_config: dict,
+    bones: dict,
+    output_path: str | Path,
+) -> Path:
+    """
+    导出绑定配置。
+
+    Args:
+        rig_config: 绑定配置
+        bones: 骨骼数据
+        output_path: 输出文件路径
+
+    Returns:
+        输出文件路径
+    """
+    import json
+
+    config = {
+        "config": rig_config,
+        "bones": bones,
+    }
+
+    output_path = Path(output_path)
+    with open(output_path, 'w', encoding='utf-8') as f:
+        json.dump(config, f, indent=2)
+
+    return output_path

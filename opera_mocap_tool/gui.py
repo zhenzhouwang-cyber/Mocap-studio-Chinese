@@ -60,6 +60,26 @@ from opera_mocap_tool.analysis.segments import (
     detect_motion_boundaries,
 )
 
+# 商业模块导入
+try:
+    from opera_mocap_tool.commercial import (
+        ParticlePreset,
+        EmitterShape,
+        ParticleEmitter,
+        ParticleSystem,
+        TDParticleTransmitter,
+        PresetLibrary,
+        DangType,
+        BodyPart,
+        RigConfig,
+        OperaRigBuilder,
+        OperaMaterialLibrary,
+        OperaAnimationLibrary,
+    )
+    COMMERCIAL_AVAILABLE = True
+except ImportError:
+    COMMERCIAL_AVAILABLE = False
+
 STYLE_CSS = """
 <style>
     :root {
@@ -408,7 +428,7 @@ document.addEventListener('DOMContentLoaded', function() {
 """, height=0, scrolling=False)
 
     # ==================== 内容Tab：功能模块 ====================
-    tab_viewer, tab_overview, tab_quality, tab_kinematics, tab_opera, tab_yunshou, tab_ref_view, tab_sync_view, tab_exp_view = st.tabs([
+    tab_viewer, tab_overview, tab_quality, tab_kinematics, tab_opera, tab_yunshou, tab_ref_view, tab_sync_view, tab_exp_view, tab_commercial = st.tabs([
         "🎬 动捕查看器",
         "📊 概览",
         "✅ 数据质量",
@@ -418,6 +438,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "📐 参考比对",
         "🎵 唱做关联",
         "📤 导出",
+        "💎 商业模块",
     ])
 
     # ========== 动捕查看器 Tab：上传 + 3D 查看 ==========
@@ -1551,10 +1572,239 @@ document.addEventListener('DOMContentLoaded', function() {
                 if csv_path and csv_path.exists():
                     with open(csv_path, encoding="utf-8") as f:
                         st.download_button("📥 下载 CSV", f.read(), csv_path.name, "text/csv", key="dl_csv")
-        with col_dl3:
-            if plot_path and plot_path.exists():
-                with open(plot_path, "rb") as f:
-                    st.download_button("📥 下载 PNG", f.read(), plot_path.name, "image/png", key="dl_png")
+            with col_dl3:
+                if plot_path and plot_path.exists():
+                    with open(plot_path, "rb") as f:
+                        st.download_button("📥 下载 PNG", f.read(), plot_path.name, "image/png", key="dl_png")
+
+    # ========== 商业模块 ==========
+    with tab_commercial:
+        if not COMMERCIAL_AVAILABLE:
+            st.warning("⚠️ 商业模块不可用，请检查安装")
+        else:
+            st.markdown("### 💎 商业模块")
+            st.caption("专业的TD粒子效果、Blender绑定和AI动作生成工具")
+
+            # 子标签页
+            sub_tab_particles, sub_tab_rig, sub_tab_ai = st.tabs([
+                "✨ TD粒子效果",
+                "🎭 Blender绑定",
+                "🤖 AI动作生成",
+            ])
+
+            # ========== TD粒子效果 ==========
+            with sub_tab_particles:
+                st.markdown("#### ✨ TouchDesigner 粒子效果")
+                st.caption("基于动捕数据的实时粒子效果")
+
+                col1, col2 = st.columns(2)
+                with col1:
+                    preset_type = st.selectbox(
+                        "粒子效果预设",
+                        options=[p.value for p in ParticlePreset],
+                        index=0,
+                    )
+                with col2:
+                    emitter_marker = st.selectbox(
+                        "发射器关联",
+                        options=["head", "hand_l", "hand_r", "spine_upper"],
+                        index=0,
+                    )
+
+                # 获取预设
+                preset = ParticlePreset(preset_type)
+                emitter = PresetLibrary.create_emitter_from_preset(
+                    preset,
+                    marker_name=emitter_marker,
+                )
+
+                # 显示发射器参数
+                with st.expander("⚙️ 发射器参数", expanded=False):
+                    emit_rate = st.slider("发射速率", 10, 200, int(emitter.emit_rate))
+                    lifetime = st.slider("生命周期(秒)", 0.5, 5.0, emitter.lifetime)
+                    size = st.slider("粒子大小", 0.01, 0.5, emitter.size)
+
+                # 创建粒子系统
+                particle_system = ParticleSystem()
+                particle_system.add_emitter(emitter)
+
+                # 模拟数据预览
+                st.markdown("##### 🎬 效果预览")
+                if st.button("▶️ 生成粒子预览"):
+                    particle_system.start()
+                    positions = {
+                        emitter_marker: (0.0, 1.0, 0.0),
+                    }
+                    for _ in range(30):
+                        particle_system.update(positions, 0.016)
+
+                    particle_count = len(particle_system._particles)
+                    st.success(f"生成了 {particle_count} 个粒子")
+
+                    particle_system.stop()
+
+                # 导出选项
+                st.markdown("##### 📤 导出设置")
+                export_format = st.radio("导出格式", ["JSON", "Python脚本", "TD网络"], horizontal=True)
+                if st.button("💾 导出粒子配置"):
+                    import tempfile
+                    from pathlib import Path
+
+                    if export_format == "JSON":
+                        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+                            temp_path = f.name
+                        # 导出为JSON
+                        import json
+                        config = {
+                            "preset": preset_type,
+                            "emitter": emitter.to_dict(),
+                            "system": {
+                                "max_particles": particle_system.max_particles,
+                            }
+                        }
+                        with open(temp_path, 'w') as f:
+                            json.dump(config, f, indent=2)
+                        st.success(f"已导出至 {temp_path}")
+
+            # ========== Blender绑定 ==========
+            with sub_tab_rig:
+                st.markdown("#### 🎭 Blender 京剧角色绑定")
+                st.caption("生成京剧专用骨骼系统和材质")
+
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    dang_type = st.selectbox(
+                        "行当",
+                        options=[d.value for d in DangType],
+                        index=0,
+                    )
+                with col2:
+                    gender = st.selectbox(
+                        "性别",
+                        options=["male", "female"],
+                        index=0,
+                    )
+                with col3:
+                    height = st.number_input(
+                        "身高(米)",
+                        min_value=1.4,
+                        max_value=2.0,
+                        value=1.7,
+                        step=0.05,
+                    )
+
+                # 创建绑定
+                config = RigConfig(
+                    dang=DangType(dang_type),
+                    gender=gender,
+                    height=height,
+                )
+                builder = OperaRigBuilder(config)
+                bones = builder.build_base_rig()
+
+                # 显示骨骼信息
+                st.markdown("##### 🦴 骨骼信息")
+                st.info(f"基础骨骼数量: {len(bones)}")
+
+                # 添加京剧特有骨骼
+                add_opera_bones = st.checkbox("添加京剧特有骨骼(翎子/髯口/水袖/靠旗)", value=True)
+                if add_opera_bones:
+                    bones = builder.add_opera_bones()
+                    st.success(f"总骨骼数量: {len(bones)}")
+
+                # 导出选项
+                st.markdown("##### 📤 导出")
+                export_format_rig = st.selectbox(
+                    "导出格式",
+                    options=["JSON", "Blender Python脚本"],
+                    index=0,
+                )
+
+                if st.button("💾 导出绑定"):
+                    import tempfile
+                    from pathlib import Path
+
+                    if export_format_rig == "JSON":
+                        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+                            temp_path = f.name
+                        result = builder.export_to_json(temp_path)
+                        st.success(f"已导出至 {result['path']}")
+                        st.caption(f"骨骼数量: {result['bone_count']}")
+                    else:
+                        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+                            temp_path = f.name
+                        result = builder.export_to_blender(temp_path)
+                        st.success(f"已导出至 {result['path']}")
+                        st.caption("在Blender中运行此脚本创建绑定")
+
+                # 材质库预览
+                with st.expander("🎨 材质库预览"):
+                    st.markdown("##### 脸谱材质")
+                    face_mats = ["face_red", "face_white", "face_black", "face_green"]
+                    cols = st.columns(4)
+                    for i, mat_name in enumerate(face_mats):
+                        mat = OperaMaterialLibrary.get_material(mat_name)
+                        if mat:
+                            with cols[i]:
+                                color = mat.get("base_color", (1, 1, 1, 1))
+                                st.color_picker(mat_name, RGB=color[:3], disabled=True)
+
+            # ========== AI动作生成 ==========
+            with sub_tab_ai:
+                st.markdown("#### 🤖 AI 动作生成")
+                st.caption("基于深度学习的京剧动作生成")
+
+                st.info("AI动作生成模块需要PyTorch支持")
+
+                # 显示预处理器信息
+                st.markdown("##### 🔧 预处理器配置")
+                col1, col2 = st.columns(2)
+                with col1:
+                    target_framerate = st.number_input(
+                        "目标帧率",
+                        min_value=15,
+                        max_value=120,
+                        value=30,
+                    )
+                with col2:
+                    normalize = st.checkbox("启用归一化", value=True)
+
+                # 创建预处理器
+                from opera_mocap_tool.commercial.ai_motion import MotionPreprocessor
+                preprocessor = MotionPreprocessor(target_framerate=target_framerate)
+
+                st.success(f"预处理器已配置 - 标准关节数: {len(preprocessor.joint_mapping)}")
+
+                # 数据增强选项
+                with st.expander("📊 数据增强选项"):
+                    augment_rotation = st.checkbox("旋转增强", value=True)
+                    augment_scale = st.checkbox("缩放增强", value=True)
+                    augment_noise = st.checkbox("噪声增强", value=False)
+                    noise_level = 0.0
+                    if augment_noise:
+                        noise_level = st.slider("噪声级别", 0.001, 0.1, 0.01)
+
+                    if st.button("🔄 生成增强数据"):
+                        # 创建示例数据
+                        import numpy as np
+                        from opera_mocap_tool.commercial.ai_motion import MotionSequence
+
+                        sample_frames = np.random.randn(30, 22, 3)
+                        sample_seq = MotionSequence(
+                            frames=sample_frames,
+                            frame_rate=target_framerate,
+                        )
+
+                        augmented = preprocessor.augment(
+                            sample_seq,
+                            rotation=augment_rotation,
+                            scale=augment_scale,
+                            noise=noise_level,
+                        )
+
+                        st.success(f"生成了 {len(augmented)} 个增强样本")
+
+                st.caption("完整的AI训练功能需要商业授权")
 
 
 if __name__ == "__main__":

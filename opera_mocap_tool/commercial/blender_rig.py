@@ -250,7 +250,7 @@ def create_opera_rig():
     # Create armature
     bpy.ops.object.armature_add(enter_editmode=True, location=(0, 0, 0))
     arm = bpy.context.object
-    arm.name = "OperaRig_{dang}"
+    arm.name = "OperaRig_DANG"
     
     # Get edit bones
     ebones = arm.data.edit_bones
