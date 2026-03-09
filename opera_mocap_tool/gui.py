@@ -1743,7 +1743,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         if mat:
                             with cols[i]:
                                 color = mat.get("base_color", (1, 1, 1, 1))
-                                st.color_picker(mat_name, RGB=color[:3], disabled=True)
+                                # 将RGB元组转换为hex颜色
+                                r, g, b = int(color[0]*255), int(color[1]*255), int(color[2]*255)
+                                hex_color = f"#{r:02x}{g:02x}{b:02x}"
+                                st.color_picker(mat_name, hex_color, disabled=True)
 
             # ========== AI动作生成 ==========
             with sub_tab_ai:
