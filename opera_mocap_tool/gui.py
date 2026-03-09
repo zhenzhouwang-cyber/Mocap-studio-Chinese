@@ -1178,7 +1178,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 key="yunshou_upload"
             )
             if yunshou_file:
-                import tempfile
                 from opera_mocap_tool.io import load_mocap
                 yunshou_tmp = Path(tempfile.gettempdir()) / yunshou_file.name
                 with open(yunshou_tmp, "wb") as f:
@@ -1648,7 +1647,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 st.markdown("##### 📤 导出设置")
                 export_format = st.radio("导出格式", ["JSON", "Python脚本", "TD网络"], horizontal=True)
                 if st.button("💾 导出粒子配置"):
-                    import tempfile
 
                     if export_format == "JSON":
                         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
@@ -1721,7 +1719,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 )
 
                 if st.button("💾 导出绑定"):
-                    import tempfile
 
                     if export_format_rig == "JSON":
                         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
