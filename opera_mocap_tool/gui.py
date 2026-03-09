@@ -75,6 +75,8 @@ try:
         OperaRigBuilder,
         OperaMaterialLibrary,
         OperaAnimationLibrary,
+        MotionSequence,
+        MotionPreprocessor,
     )
     COMMERCIAL_AVAILABLE = True
 except ImportError:
@@ -1764,7 +1766,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     normalize = st.checkbox("启用归一化", value=True)
 
                 # 创建预处理器
-                from opera_mocap_tool.commercial.ai_motion import MotionPreprocessor
                 preprocessor = MotionPreprocessor(target_framerate=target_framerate)
 
                 st.success(f"预处理器已配置 - 标准关节数: {len(preprocessor.joint_mapping)}")
@@ -1780,7 +1781,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     if st.button("🔄 生成增强数据"):
                         # 创建示例数据
-                        import numpy as np
                         from opera_mocap_tool.commercial.ai_motion import MotionSequence
 
                         sample_frames = np.random.randn(30, 22, 3)
