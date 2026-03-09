@@ -1649,7 +1649,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 export_format = st.radio("导出格式", ["JSON", "Python脚本", "TD网络"], horizontal=True)
                 if st.button("💾 导出粒子配置"):
                     import tempfile
-                    from pathlib import Path
 
                     if export_format == "JSON":
                         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
@@ -1723,7 +1722,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if st.button("💾 导出绑定"):
                     import tempfile
-                    from pathlib import Path
 
                     if export_format_rig == "JSON":
                         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
