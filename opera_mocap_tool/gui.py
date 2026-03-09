@@ -428,7 +428,7 @@ document.addEventListener('DOMContentLoaded', function() {
 """, height=0, scrolling=False)
 
     # ==================== 内容Tab：功能模块 ====================
-    tab_viewer, tab_overview, tab_quality, tab_kinematics, tab_opera, tab_yunshou, tab_ref_view, tab_sync_view, tab_exp_view, tab_commercial = st.tabs([
+    tab_viewer, tab_overview, tab_quality, tab_kinematics, tab_opera, tab_yunshou, tab_ref_view, tab_sync_view, tab_exp_view, tab_commercial, tab_realtime = st.tabs([
         "🎬 动捕查看器",
         "📊 概览",
         "✅ 数据质量",
@@ -439,6 +439,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "🎵 唱做关联",
         "📤 导出",
         "💎 商业模块",
+        "🔴 实时Pipeline",
     ])
 
     # ========== 动捕查看器 Tab：上传 + 3D 查看 ==========
@@ -1805,6 +1806,163 @@ document.addEventListener('DOMContentLoaded', function() {
                         st.success(f"生成了 {len(augmented)} 个增强样本")
 
                 st.caption("完整的AI训练功能需要商业授权")
+
+
+    # ========== 实时Pipeline ==========
+    with tab_realtime:
+        st.markdown("### 🔴 实时Pipeline 控制")
+        st.caption("实时动捕数据采集、处理和发送到TouchDesigner/Unreal Engine 5")
+
+        # 导入实时模块
+        try:
+            from opera_mocap_tool.realtime import (
+                RealtimePipeline,
+                PipelineConfig,
+                SkeletonData,
+            )
+            REALTIME_AVAILABLE = True
+        except ImportError as e:
+            REALTIME_AVAILABLE = False
+            st.error(f"实时模块导入失败: {e}")
+
+        if not REALTIME_AVAILABLE:
+            st.warning("⚠️ 实时Pipeline不可用，请检查安装")
+        else:
+            # 会话状态管理
+            if 'realtime_pipeline' not in st.session_state:
+                st.session_state.realtime_pipeline = None
+
+            # 配置区域
+            st.markdown("#### ⚙️ 连接配置")
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.markdown("**Vicon设置**")
+                vicon_host = st.text_input("Vicon主机", value="localhost", key="vicon_host")
+                vicon_port = st.number_input("Vicon端口", value=51001, key="vicon_port")
+                subject_names = st.text_input("追踪对象(逗号分隔)", value="Actor1", key="subjects")
+
+            with col2:
+                st.markdown("**目标渲染引擎**")
+                td_enabled = st.checkbox("TouchDesigner", value=True, key="td_enabled")
+                td_host = st.text_input("TD主机", value="127.0.0.1", key="td_host")
+                td_port = st.number_input("TD端口", value=7000, key="td_port")
+
+                ue5_enabled = st.checkbox("Unreal Engine 5", value=False, key="ue5_enabled")
+                ue5_host = st.text_input("UE5主机", value="127.0.0.1", key="ue5_host")
+                ue5_port = st.number_input("UE5端口", value=11111, key="ue5_port")
+
+            # 滤波设置
+            st.markdown("#### 🔧 数据处理")
+            col_f1, col_f2 = st.columns(2)
+            with col_f1:
+                filter_enabled = st.checkbox("启用滤波", value=True, key="filter_enabled")
+            with col_f2:
+                filter_type = st.selectbox("滤波类型", ["ema", "butterworth", "kalman"], index=0, key="filter_type")
+
+            # 控制按钮
+            st.markdown("#### 🎮 控制")
+            col_btn1, col_btn2, col_btn3 = st.columns(3)
+
+            pipeline = st.session_state.realtime_pipeline
+
+            with col_btn1:
+                if st.button("▶️ 启动", use_container_width=True, key="start_pipeline"):
+                    if pipeline is None or not pipeline.running:
+                        # 创建Pipeline
+                        config = PipelineConfig(
+                            vicon_host=vicon_host,
+                            vicon_port=vicon_port,
+                            subject_names=[s.strip() for s in subject_names.split(",")],
+                            td_enabled=td_enabled,
+                            td_host=td_host,
+                            td_port=td_port,
+                            ue5_enabled=ue5_enabled,
+                            ue5_host=ue5_host,
+                            ue5_port=ue5_port,
+                            filter_enabled=filter_enabled,
+                            filter_type=filter_type,
+                        )
+                        pipeline = RealtimePipeline(config)
+                        pipeline.connect()
+                        pipeline.start()
+                        st.session_state.realtime_pipeline = pipeline
+                        st.success("Pipeline已启动!")
+
+            with col_btn2:
+                if st.button("⏹ 停止", use_container_width=True, key="stop_pipeline"):
+                    if pipeline and pipeline.running:
+                        pipeline.stop()
+                        pipeline.disconnect()
+                        st.session_state.realtime_pipeline = None
+                        st.info("Pipeline已停止")
+
+            with col_btn3:
+                if st.button("🔄 刷新状态", use_container_width=True, key="refresh_stats"):
+                    pass
+
+            # 状态显示
+            if pipeline:
+                st.markdown("#### 📊 状态监控")
+                stats = pipeline.get_stats()
+
+                col_s1, col_s2, col_s3, col_s4 = st.columns(4)
+                with col_s1:
+                    status_color = "🟢" if stats["running"] else "🔴"
+                    st.metric("状态", f"{status_color} {'运行中' if stats['running'] else '已停止'}")
+                with col_s2:
+                    st.metric("帧数", stats["frame_count"])
+                with col_s3:
+                    st.metric("FPS", f"{stats['current_fps']:.1f}")
+                with col_s4:
+                    latency = stats.get('avg_latency_ms', 0)
+                    st.metric("延迟", f"{latency:.1f}ms")
+
+                # 连接状态
+                col_c1, col_c2, col_c3 = st.columns(3)
+                with col_c1:
+                    vicon_status = "✅" if stats.get('vicon_connected') else "❌"
+                    st.write(f"Vicon: {vicon_status}")
+                with col_c2:
+                    td_status = "✅" if stats.get('td_connected') else "❌"
+                    st.write(f"TD: {td_status}")
+                with col_c3:
+                    ue5_status = "✅" if stats.get('ue5_connected') else "❌"
+                    st.write(f"UE5: {ue5_status}")
+
+                # 发送统计
+                if td_enabled:
+                    st.metric("TD发送包数", stats.get('td_packets_sent', 0))
+                if ue5_enabled:
+                    st.metric("UE5发送包数", stats.get('ue5_packets_sent', 0))
+
+                # 错误显示
+                if stats.get('last_error'):
+                    st.error(f"错误: {stats['last_error']}")
+            else:
+                st.info("点击「启动」按钮开始实时Pipeline")
+
+            # 文档链接
+            with st.expander("📖 使用说明"):
+                st.markdown("""
+                ### 实时Pipeline使用指南
+
+                1. **连接Vicon**: 确保Vicon Blade正在运行，并配置正确的主机和端口
+                2. **选择目标**: 勾选TouchDesigner和/或UE5，配置目标主机的IP和端口
+                3. **数据处理**: 可选择启用滤波来平滑动捕数据
+                4. **启动**: 点击「启动」按钮开始实时数据采集和发送
+                5. **监控**: 观察状态监控区域，查看帧率、延迟和发送统计
+
+                ### TD端配置
+                - 在TD中创建一个DAT Receive或UDP DAT
+                - 端口设置为7000（默认）
+                - 接收格式: JSON
+
+                ### UE5端配置
+                - 使用Live Link或自定义接收器
+                - 端口设置为11111（默认）
+                - 数据格式: JSON with bone transforms
+                """)
 
 
 if __name__ == "__main__":
